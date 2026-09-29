@@ -1,0 +1,64 @@
+name: Gerar APK do QrPix
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Gerar APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar arquivos do repositório
+        uses: actions/checkout@v4
+
+      - name: Localizar ZIP do QrPix
+        run: |
+          ZIP=$(find . -maxdepth 1 -type f -name 'QrPix-Android-FINAL-OFFLINE.zip' | head -n 1)
+
+          if [ -z "$ZIP" ]; then
+            echo "ERRO: QrPix-Android-FINAL-OFFLINE.zip não foi encontrado."
+            exit 1
+          fi
+
+          echo "ZIP encontrado: $ZIP"
+
+      - name: Extrair projeto Android
+        run: |
+          rm -rf android-project
+          mkdir android-project
+          unzip -q QrPix-Android-FINAL-OFFLINE.zip -d android-project
+
+          echo "Projeto extraído:"
+          find android-project -maxdepth 5 -type f | sort
+
+      - name: Configurar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Configurar Android SDK
+        uses: android-actions/setup-android@v4
+        with:
+          packages: 'platform-tools platforms;android-35 build-tools;35.0.0'
+
+      - name: Configurar Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+
+      - name: Gerar APK
+        working-directory: android-project
+        run: |
+          gradle assembleDebug --no-daemon
+
+      - name: Publicar APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: QrPix-APK
+          path: android-project/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error

@@ -1,4 +1,4 @@
-name: Gerar APK do QrPix
+Name: Gerar APK do QrPix
 
 on:
   workflow_dispatch:
@@ -17,10 +17,10 @@ jobs:
 
       - name: Localizar ZIP do QrPix
         run: |
-          ZIP=$(find . -maxdepth 1 -type f -name 'QrPix-Android-FINAL-OFFLINE.zip' | head -n 1)
+          ZIP=$(find . -maxdepth 1 -type f -name 'QrPix-Android-FINAL-WHATSAPP-FIX.zip' | head -n 1)
 
           if [ -z "$ZIP" ]; then
-            echo "ERRO: QrPix-Android-FINAL-OFFLINE.zip não foi encontrado."
+            echo "ERRO: QrPix-Android-FINAL-WHATSAPP-FIX.zip não foi encontrado."
             exit 1
           fi
 
@@ -30,7 +30,7 @@ jobs:
         run: |
           rm -rf android-project
           mkdir android-project
-          unzip -q QrPix-Android-FINAL-OFFLINE.zip -d android-project
+          unzip -q QrPix-Android-FINAL-WHATSAPP-FIX.zip -d android-project
 
           echo "Projeto extraído:"
           find android-project -maxdepth 5 -type f | sort

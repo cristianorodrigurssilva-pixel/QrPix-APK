@@ -1,4 +1,4 @@
-Name: Gerar APK do QrPix
+name: Gerar APK do QrPix
 
 on:
   workflow_dispatch:
